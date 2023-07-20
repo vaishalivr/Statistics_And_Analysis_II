@@ -1,0 +1,70 @@
+---
+title: "Homework_4"
+author: "Vaishali Verma"
+date: "2023-06-06"
+output: html_document
+---
+
+## Libraries
+
+```{r libraries, message = FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+## Reading the Data
+
+```{r data_read}
+data <- read.csv('/Users/vaishaliverma/Downloads/anscombe-data.csv')
+```
+
+## Summary Statistics
+```{r summary_stats_&_r_squared}
+summary_data <- data %>%
+  group_by(series) %>%
+  summarize(mean_x = mean(x), 
+            mean_y = trunc(mean(y)*10000)/10000, 
+            sd_x = sd(x), 
+            sd_y = sd(y), 
+            median_x = median(data$x),
+            median_y = median(data$y))
+
+model <- lm(series~x+y, data=data)
+
+print(summary_data)
+print(model)
+```
+
+## Plots
+
+```{r plots}
+plot <- ggplot(data) + 
+  geom_point(aes(x, y)) + 
+  geom_smooth(aes(x, y), method = lm) +
+  facet_wrap(~series) +
+  theme(axis.title.x = element_blank(), axis.title.y = element_blank()) +
+  ggtitle("Anscombe's Quartet") + 
+  labs(caption = "The Y Mean and Median of these plots are 7.5009 & 7.52 respectively, hence the overlap of lines.") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+plot_mean <- plot + 
+  geom_vline(xintercept = mean(data$x), linetype="dotdash", alpha=0.3) + 
+  geom_hline(yintercept = mean(data$y), linetype="dotdash", alpha=0.3) + 
+  annotate("text", x=17.5, y=8.2, label="Mean/Median", size=3, color='blue') +
+  annotate('text', x=8.5, y=14.5, label="Mean", size=3, color='blue', angle=90) +
+  theme(panel.background = element_blank())
+
+plot_mean_sd <- plot_mean + 
+  geom_vline(xintercept = sd(data$x), linetype="dotdash", alpha=0.3) + 
+  geom_hline(yintercept = sd(data$y), linetype="dotdash", alpha=0.3) +
+  annotate('text', x=18.5, y=2.5, label="Std. Dev", size=3, color='blue') +
+  annotate('text', x=2.7, y=13.5, label="Std. Dev", size=3, color='blue', angle=90)
+
+plot_mean_sd_median <- plot_mean_sd +
+  geom_vline(xintercept = median(data$x), linetype="dotdash", alpha=0.3) + 
+  geom_hline(yintercept = median(data$y), linetype="dotdash", alpha=0.3) +
+  annotate('text', x=7.5, y=14.5, label='Median', size=3, color='blue', angle=90)
+
+plot_mean_sd_median
+
+```
