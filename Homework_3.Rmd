@@ -1,0 +1,72 @@
+---
+title: "Homework_3"
+author: "Vaishali Verma"
+date: "2023-05-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Answer 1
+
+```{r answer_1, message=FALSE, warning=FALSE}
+library (dplyr)
+url1 <- "https://www2.census.gov/programs-surveys/popest/technical-documentation/file-layouts/2010-2020"
+getwd()
+filepath <- "/Users/vaishaliverma/Downloads/hw_wk3/data1.csv"
+download.file(url1, destfile = filepath, method = "auto")
+if (file.exists(filepath)) {
+  cat("Data downloaded successfully.")
+} else {
+  cat("Error downloading the data.")
+}
+url2 <- "https://www2.census.gov/programs-surveys/popest/datasets/2010-2020/counties/asrh/CC-EST2020-ALLDATA-06.csv"
+getwd()
+filepath <- "/Users/vaishaliverma/Downloads/hw_wk3/data2.csv"
+download.file(url2, destfile = filepath, method = "auto")
+if (file.exists(filepath)) {
+  cat("Data downloaded successfully.")
+} else {
+  cat("Error downloading the data.")
+}
+data2 <- read.csv(filepath)
+data2 <- data2[complete.cases(data2), ]
+
+data2 <- data2[, c("STNAME", "CTYNAME", "YEAR", "AGEGRP", "TOT_POP", "TOT_MALE", "TOT_FEMALE")]
+#head(data2)
+#dim(data2)
+```
+
+## Answer 2
+```{r answer_2}
+set1 <- subset(data2, AGEGRP == 0)
+set2 <- subset(data2, AGEGRP != 0)
+```
+
+## Answer 3
+```{r answer_3, message=FALSE, warning=FALSE}
+answer_3 <- set2 %>%
+  group_by(STNAME, CTYNAME, YEAR) %>%
+  summarise(TOT_POP = sum(TOT_POP), TOT_MALE = sum(TOT_MALE), TOT_FEMALE = sum(TOT_FEMALE))
+print(answer_3)
+```
+
+## Answer 4
+```{r answer_4}
+answer_4 <- answer_3[(answer_3$YEAR >= 3 & answer_3$YEAR <= 12),]
+print(answer_4)
+```
+
+## Answer 5
+```{r answer_5}
+answer_5 <- (answer_4 %>% group_by(STNAME, CTYNAME) %>% summarise(TOT_POP = sum(TOT_POP)))
+print(answer_5)
+```
+
+## Answer 6
+```{r answer_6}
+answer_6 <- sum(answer_5$TOT_POP)
+print(answer_6)
+```
