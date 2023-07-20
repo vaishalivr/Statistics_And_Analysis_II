@@ -1,0 +1,110 @@
+---
+title: "Homework_6"
+author: "Vaishali Verma"
+date: "2023-06-20"
+output: html_document
+---
+
+#### Libraries
+##### My last name is Verma so I will analyze heights
+```{r libraries, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
+#### Getting data, splitting data, subsetting data
+
+```{r data}
+data <- gcookbook::heightweight
+
+subset_male <- subset(data, data$sex == 'm')
+subset_female <- subset(data, data$sex == 'f')
+
+set.seed(100)
+random_sample_female <- subset_female[sample(nrow(subset_female), 15, replace = FALSE), ]
+random_sample_male <- subset_male[sample(nrow(subset_male), 15, replace = FALSE), ]
+random_sample_female_summary <- summary(random_sample_female)
+random_sample_male_summary <- summary(random_sample_male)
+
+```
+#### Confidence in two means being same or different
+##### Using t-test to test means
+###### H0 - there is no significant difference between the mean of two groups
+###### H1 - there is a significant difference between the mean of two groups
+```{r t_test}
+t_test_result <- t.test(random_sample_female$heightIn, random_sample_male$heightIn, alpha = 0.05)
+t_test_result
+p_value <- t_test_result$p.value
+p_value
+my_confidence <- ifelse(p_value < 0.05, "reject", "fail to reject")
+my_confidence
+```
+###### Thus, I fail to reject H0
+###### There is not enough evidence to say the means are different
+
+#### Single Random Dataframe
+```{r combine_random_dataframe}
+combined_data <- bind_rows(random_sample_female, random_sample_male)
+mean_female_random <- mean(random_sample_female$heightIn)
+mean_male_random <- mean(random_sample_male$heightIn)
+
+#confidence intervals
+female_t_test <- t.test(random_sample_female$heightIn, alpha= 0.05)
+male_t_test <- t.test(random_sample_male$heightIn, alpha=0.05)
+
+# Create a jittered points chart
+plot <-  ggplot(combined_data, aes(x = sex, y = heightIn)) +
+  geom_jitter(width = 0.2, height = 0, alpha = 0.5) 
+plot <- plot + geom_errorbar(data = random_sample_male, aes(x = sex, y = heightIn, ymin = male_t_test$conf.int[1], ymax = male_t_test$conf.int[2]),
+                width = 0.2, color = "blue") 
+plot <-  plot + geom_errorbar(data = random_sample_female, aes(x = sex, y = heightIn, ymin = female_t_test$conf.int[1], ymax = female_t_test$conf.int[2]),
+                       width = 0.2, color = 'red')
+plot <- plot + geom_hline(data = random_sample_female, aes(yintercept = mean_female_random), color = 'pink') +
+  geom_label(aes(x = 'f', y= 75), color ='pink', label = paste("Sample Mean-", round(mean_female_random, 2)))
+plot <- plot + geom_hline(data = random_sample_male, aes(yintercept = mean_male_random), color = 'lightblue') +
+  geom_label(aes(x = 'm', y=75), color = 'lightblue', label = paste("Sample Mean-", round(mean_male_random, 2)))
+plot
+```
+
+#### Perform t-test for grades 6 to 10, p-value and reject or fail-to-reject
+```{r grade_t_test}
+data$grade<-as.factor(round(data$ageYear) -6)
+
+#t tests
+t_test_grade6 <- t.test(subset(data, data$grade == 6 & data$sex == 'm')$heightIn, subset(data, data$grade == 6 & data$sex == 'f')$heightIn, alpha = 0.05)
+t_test_grade7 <- t.test(subset(data, data$grade == 7 & data$sex == 'm')$heightIn, subset(data, data$grade == 7 & data$sex == 'f')$heightIn)
+t_test_grade8 <- t.test(subset(data, data$grade == 8 & data$sex == 'm')$heightIn, subset(data, data$grade == 8 & data$sex == 'f')$heightIn)
+t_test_grade9 <- t.test(subset(data, data$grade == 9 & data$sex == 'm')$heightIn, subset(data, data$grade == 9 & data$sex == 'f')$heightIn)
+t_test_grade10 <- t.test(subset(data, data$grade == 10 & data$sex == 'm')$heightIn, subset(data, data$grade == 10 & data$sex == 'f')$heightIn)
+
+grade <- c("Grade_6", "Grade_7", "Grade_8", "Grade_9", "Grade_10")
+alpha <- rep(0.05, 5)
+p_value <- c(t_test_grade6$p.value, t_test_grade7$p.value, t_test_grade8$p.value, t_test_grade9$p.value, t_test_grade10$p.value)
+p_value
+result <- c()
+for (i in 1:length(p_value)) {
+  if (p_value[i] > alpha[i]) {
+    result <- c(result, "fail to reject")
+  } else {
+    result <- c(result, "reject")
+  }
+}
+test_table <- data.frame(Name = grade, Alpha = alpha, pValue = p_value, Result=result)
+test_table
+```
+
+#### Optional - facet grid to show mean height and 95% CI for male and female
+```{r facet_grid_mean_ht_ci, message=FALSE, warning=FALSE}
+ggplot(data, aes(x = sex, y = heightIn)) +
+  geom_point(width = 0.2, height = 0, alpha = 0.3) +
+  stat_summary(
+    fun = mean, 
+    geom = "errorbar", 
+    position = position_dodge(width = 0.2),
+    width = 0.2,
+    fun.data = mean_cl_normal,
+    na.rm = TRUE,
+    color = "red"
+  ) +
+  facet_wrap(~ grade, nrow = 2)
+```
