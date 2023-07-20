@@ -1,0 +1,248 @@
+---
+title: "Homework_2"
+author: "Vaishali Verma"
+date: "2023-05-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data and calculate Summary Statistics
+
+```{r data, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(viridis)
+library(hrbrthemes)
+library(gridExtra)
+
+data = read.csv('/Users/vaishaliverma/Downloads/hw_wk2/hw2_DataSet.csv')
+summary(data)
+```
+
+### Dot Plot Random A
+
+```{r dot_plot_random_A}
+p1 <- ggplot(subset(data, select = -c(random_B, random_C, random_D)), aes(x=sample, y=random_A)) + 
+  geom_dotplot(binwidth=0.9,binaxis='y', stackdir='center', stackratio = 1, dotsize = 0.3, fill="#264653") +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_B, random_C, random_D)))$random_A, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_B, random_C, random_D)))$random_A, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle('Random A Dot Plot')
+
+```
+
+### Dot Plot Random B
+
+```{r dot_plot_random_B}
+p2 <- ggplot(subset(data, select = -c(random_A, random_C, random_D)), aes(x=sample, y=random_B)) + 
+  geom_dotplot(binaxis='y', stackdir='center', stackratio = 1, dotsize = 0.45, fill="#F4A261") +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_C, random_D)))$random_B, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_C, random_D)))$random_B, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle('Random B Dot Plot')
+```
+
+### Dot Plot Random C
+
+```{r dot_plot_random_C}
+p3 <- ggplot(subset(data, select = -c(random_A, random_B, random_D)), aes(x=sample, y=random_C)) + 
+  geom_dotplot(binaxis='y', stackdir='center', stackratio = 1, dotsize = 0.45, fill="#F4A261") +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_D)))$random_C, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_D)))$random_C, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle('Random C Dot Plot')
+```
+
+### Dot Plot Random D
+
+```{r dot_plot_random_D}
+p4 <- ggplot(subset(data, select = -c(random_A, random_B, random_C)), aes(x=sample, y=random_D)) + 
+  geom_dotplot(binaxis='y', stackdir='center', stackratio = 1, dotsize = 0.45, fill="#F4A261") +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+    geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_C)))$random_D, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_C)))$random_D, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle('Random D Dot Plot')
+```
+
+### Box Plot Random A
+
+```{r box_plot_random_A}
+p5 <- ggplot(data, aes(x=sample, y=random_A)) + 
+  geom_boxplot(fill="#F4A261") + 
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_B, random_C, random_D)))$random_A, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_B, random_C, random_D)))$random_A, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random A BoxPlot") +
+  xlab("") 
+```
+
+### Box Plot Random B
+
+```{r box_plot_random_B}
+p6 <- ggplot(data, aes(x=sample, y=random_B)) + 
+  geom_boxplot(fill="#F4A261") + 
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_C, random_D)))$random_B, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_C, random_D)))$random_B, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random B BoxPlot") +
+  xlab("") 
+```
+
+## Box Plot Random C
+
+```{r box_plot_random_C}
+p7 <- ggplot(data, aes(x=sample, y=random_C)) + 
+  geom_boxplot(fill="#F4A261") + 
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_D)))$random_C, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_D)))$random_C, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random C BoxPlot") +
+  xlab("") 
+  
+```
+
+### Box Plot Random D
+
+```{r box_plot_random_D}
+p8 <- ggplot(data, aes(x=sample, y=random_B)) + 
+  geom_boxplot(fill="#F4A261") + 
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+  geom_line(aes(x=mean(sample))) +
+  geom_line(aes(x = median(sample), color='green', linetype="8f")) +
+    geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_C)))$random_D, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_line(aes(x = (quantile((subset(data, select = -c(random_A, random_B, random_C)))$random_D, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random D BoxPlot") +
+  xlab("") 
+```
+
+### Histogram Random A
+
+```{r histogram_A}
+p9 <- ggplot(subset(data, select = -c(random_B, random_C, random_D)), aes(x=random_A)) + 
+  geom_histogram(binwidth = 0.25, fill="#69b3a2", alpha=0.9) +
+  theme_ipsum() +  
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+   geom_vline(aes(xintercept = mean(random_A))) +
+  geom_vline(aes(xintercept = median(random_A), color="green", linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_B, random_C, random_D)))$random_A, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_B, random_C, random_D)))$random_A, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random A Histogram")
+```
+
+### Historgram Random B
+
+```{r histogram_B}
+p10 <- ggplot(subset(data, select = -c(random_A, random_C, random_D)), aes(x=random_B)) + 
+  geom_histogram(binwidth = 0.25, fill="#69b3a2", alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+    geom_vline(aes(xintercept = mean(random_B))) +
+  geom_vline(aes(xintercept = median(random_B), color="green", linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_A, random_C, random_D)))$random_B, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_A, random_C, random_D)))$random_B, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random B Histogram")
+```
+
+### Histogram Random C
+
+```{r histogram_C}
+p11 <- ggplot(subset(data, select = -c(random_A, random_B, random_D)), aes(x=random_C)) + 
+  geom_histogram(binwidth = 0.25, fill="#69b3a2", alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+    geom_vline(aes(xintercept = mean(random_C))) +
+  geom_vline(aes(xintercept = median(random_C), color="green", linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_A, random_B, random_D)))$random_C, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_A, random_B, random_D)))$random_C, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random C Histogram")
+```
+
+### Histogram Random D
+
+```{r histogram_D}
+p12 <- ggplot(subset(data, select = -c(random_A, random_B, random_C)), aes(x=random_D)) + 
+  geom_histogram(binwidth = 0.25, fill="#69b3a2", alpha=0.9) +
+  theme_ipsum() +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=11)
+  ) +
+    geom_vline(aes(xintercept = mean(random_D))) +
+  geom_vline(aes(xintercept = median(random_D), color="green", linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_A, random_B, random_B)))$random_D, probs = c(0.25))), color='blue', linetype="8f")) +
+  geom_vline(aes(xintercept = (quantile((subset(data, select = -c(random_A, random_B, random_C)))$random_D, probs = c(0.75))), color='blue', linetype="8f")) +
+  ggtitle("Random D Histogram")
+```
+
+### Plot Grid
+
+```{r grid, warning=FALSE, message=FALSE}
+grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, nrow = 3)
+```
